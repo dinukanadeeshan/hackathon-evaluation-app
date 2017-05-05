@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+
+<body>
+  <h1>Admin Panel</h1>
+  <a href="/" class="btn btn-primary">Home</a>
+  <a href="#" class="btn btn-primary" onclick="reloadAllClients()">Reload clients</a>
+
+  <div id="app">
+    <div id="judges">
+      <h3>Judges</h3>
+      <div>
+        <table>
+          <tr>
+            <th>socket id</th>
+            <th>judge name</th>
+            <th>actions</th>
+          </tr>
+          <tr v-for="judge in judges">
+            <td>{{judge.socket_id}}</td>
+            <td>{{judge.name}}</td>
+            <td>
+              <a href="#" class="btn bn-primary" @click.prevent="kickJudge(judge.socket_id)">Kick</a>
+              <a href="#" class="btn bn-primary" @click.prevent="reloadJudge(judge.socket_id)">Reload</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <hr>
+      <h3>Judges Mapping</h3>
+      <form action="" @submit.prevent="createNewJudge">
+        <input type="text" v-model="newJudge.name">
+        <input type="text" v-model="newJudge.company">
+        <input type="submit" value="Add New Judge">
+      </form>
+      <hr>
+      <table class="table-responsive">
+        <tr>
+          <th>id</th>
+          <th>name</th>
+          <th>company</th>
+          <th>socket</th>
+          <th>actions</th>
+        </tr>
+      <tr v-for="judge in judges_mapping">
+        <td><input type="text" v-model="judge.id"></td>
+        <td><input type="text" v-model="judge.name"></td>
+        <td><input type="text" v-model="judge.company"></td>
+        <td><input type="text" v-model="judge.socket_id"></td>
+        <td><input type="button" value="Remove" @click="removeJudgeFromMapping(judge.id)"></td>
+      </tr>
+      </table>
+      <hr>  
+      <a href="#" class="btn btn-primary" @click="update_judges_mapping">Update mappings</a>
+      <hr>
+    </div>
+    <div id="projects">
+      <form @submit.prevent="createNewProject">
+        <input type="text" v-model="newProject.idea_title">
+        <input type="text" v-model="newProject.idea_description">
+        <input type="text" v-model="newProject.student_name">
+        <input type="submit" value="Add New Project">
+      </form>
+      <table>
+        <tr>
+          <th>id</th>
+          <th>owner</th>
+          <th>title</th>
+          <th>description</th>
+          <th>actions</th>
+        </tr>
+        <tr v-for="project in projects">
+          <td><input type="text" v-model="project.id"></td>
+          <td><input type="text" v-model="project.student_name"></td>
+          <td><input type="text" v-model="project.idea_title"></td>
+          <td><input type="text" v-model="project.idea_description"></td>
+          <td>
+            <a href="#" class="btn btn-primary" @click="removeProjectFromListing(project.id)">Remove</a>
+            <a href="#" class="btn btn-primary" @click="setActiveProject(project.id)">Set Active</a>
+          </td>
+        </tr>
+      </table>
+      <a href="#" class="btn btn-primary" @click.stop="update_projects">Update projects</a>
+    </div>
+  </div>
+
+
+  <!-- jQuery first, then Tether, then Bootstrap JS. -->
+  <script src="js/jquery-3.2.1.min.js"></script>
+  <script src="js/tether.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+
+  <script src="js/lodash.min.js"></script>
+
+  <!-- include Vue and Axios -->
+  <script src="js/axios.min.js"></script>
+  <script src="js/vue.js"></script>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        judges: {},
+        judges_mapping: {},
+        newJudge: {
+          name: '',
+          company: '',
+        },
+        projects: {},
+        newProject: {
+          time: null,
+          idea_title: '',
+          idea_description: '',
+          student_name: '',
+        },
+        activeProject: {},
+      },
+      methods: {
+        createNewJudge: function(){
+          addJudge(this.newJudge.name, this.newJudge.company);
+        },
+        update_judges_mapping: function(){
+          sendJudgeEdits(this.judges_mapping);
+        },
+        kickJudge: function(_socket_id){
+          socket_kickJudge(_socket_id);
+        },
+        reloadJudge: function(_socket_id){
+          socket_reloadJudge(_socket_id);
+        },
+        removeJudgeFromMapping: function(id){
+          if(confirm('delete judge?')){
+            delete this.judges_mapping[id]; 
+            sendJudgeEdits(this.judges_mapping);  
+          }
+        },
+        createNewProject: function(){
+          addProject(this.newProject.idea_title, this.newProject.idea_description, this.newProject.student_name);
+        },
+        removeProjectFromListing: function(id){
+          if(confirm('delete project?')){
+            delete this.projects[id]; 
+            sendProjectEdits(this.projects);  
+          }
+        },
+        update_projects: function(){
+          sendProjectEdits(this.projects);
+        },
+        setActiveProject: function(id){
+          sendActiveProject(id);
+        },
+
+      },
+    });
+  </script>
+
+  <!-- include Socket.io scripts -->
+  <script src="js/socket.io.js"></script>
+  <script src="js/socket_default.js"></script>
+  <script src="js/socket_admin.js"></script>
+
+
+</body>
+
+</html>

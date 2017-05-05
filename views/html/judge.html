@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+  </head>
+  <body>
+    <h1>Judge Panel</h1>
+    <div id="app">
+      <div id="judges">
+        {{name}}
+      </div>
+      <div id="project">
+        {{activeProject.id}}
+        {{activeProject.student_name}}
+        {{activeProject.idea_title}}
+        {{activeProject.idea_description}}
+      </div>
+      <div id="scores">
+        <div>
+          <h2>Content <div class="float-right">{{scores[0]}}</div></h2>
+          <input type="range" min="0" max="10" v-model="scores[0]">
+        </div>
+        <div>
+          <h2>Business Model <div class="float-right">{{scores[1]}}</div></h2>
+          <input type="range" min="0" max="10" v-model="scores[1]">
+        </div>
+        <div>
+          <h2>Presentation <div class="float-right">{{scores[2]}}</div></h2>
+          <input type="range" min="0" max="10" v-model="scores[2]">
+        </div>
+        <div><h2>Total: {{scores_sum()}}</h2></div>
+        <div><textarea v-model="comments" ></textarea></div>
+      </div>
+    </div>
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/tether.min.js" ></script>
+    <script src="js/bootstrap.min.js" ></script>
+
+    <script src="js/lodash.min.js"></script>
+
+    <!-- include Vue and Axios -->
+    <script src="js/axios.min.js" ></script>
+    <script src="js/vue.js" ></script>
+
+    <script>
+      var app = new Vue({
+        el: '#app',
+        data: {
+          name: null,
+          activeProject: {},
+          scores: [0,0,0],
+          comments: '',
+        },
+        methods: {
+          scores_sum: function(){
+            let vm = this;
+            return _.sumBy(vm.scores, function(o) { return +o; });
+          },
+
+          update_scores: function(){
+            let vm = this;
+            // _.debounce(function () {
+              judge_sendScores(vm.activeProject.id, vm.scores, vm.comments);
+            // }, 300)
+          }
+        },
+        watch: {
+          activeProject: function(e){
+            console.log(e);
+          },
+          scores: function(){
+            this.update_scores();
+          },
+          comments: function(){
+            this.update_scores();
+          },
+        }
+      });
+    </script>
+
+    <!-- include Socket.io scripts -->
+    <script src="js/socket.io.js" ></script>
+    <script src="js/socket_default.js" ></script>
+    <script src="js/socket_judge.js" ></script>
+
+    <script>
+
+    </script>
+
+  </body>
+</html>
