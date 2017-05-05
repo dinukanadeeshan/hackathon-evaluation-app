@@ -15,3 +15,7 @@ socket.on('update_active_project', function(data){
 		app.activeProject = data;
 	}
 })
+
+socket.on('state_updated', function(){
+    socket.emit('state_updated_need_info');
+})

@@ -5,12 +5,19 @@ socket.on('connection_status', function(data){
     if(data !== 'success'){
         window.location.replace('/');
     } else {
+
+        console.log('continuing')
         socket.emit('get_judge_data');
         socket.on('project_data', function(_project_data){
             console.log('_project_data', _project_data)
         })
         socket.on('judge_data', function(_judge_data){
             console.log('_judge_data', _judge_data)
+        })
+
+        socket.on('judges_mapping_data', function(_judge_mapping_data){
+            console.log('judges_mapping_data', _judge_mapping_data)
+            app.judgeDetails = _judge_mapping_data;
         })
 
         var name = localStorage.getItem('judge_name');

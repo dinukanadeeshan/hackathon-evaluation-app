@@ -11,30 +11,43 @@
   <body>
     <h1>Judge Panel</h1>
     <div id="app">
-      <div id="judges">
+
+      <div class="judges" v-if="judgeDetails.id">
+        {{judgeDetails.socket_id}}
+        {{judgeDetails.name}}
+        {{judgeDetails.company}}
+      </div>
+      <div class="judges" v-else>
         {{name}}
       </div>
-      <div id="project">
-        {{activeProject.id}}
-        {{activeProject.student_name}}
-        {{activeProject.idea_title}}
-        {{activeProject.idea_description}}
+      <div class="activeProject" v-if="activeProject && activeProject.id && judgeDetails.id">
+        <div id="project" v-if="activeProject">
+          {{activeProject.id}}
+          {{activeProject.student_name}}
+          {{activeProject.idea_title}}
+          {{activeProject.idea_description}}
+        </div>
+        <div id="scores">
+          <div>
+            <h2>Content <div class="float-right">{{scores[0]}}</div></h2>
+            <input type="range" min="0" max="10" v-model="scores[0]">
+          </div>
+          <div>
+            <h2>Business Model <div class="float-right">{{scores[1]}}</div></h2>
+            <input type="range" min="0" max="10" v-model="scores[1]">
+          </div>
+          <div>
+            <h2>Presentation <div class="float-right">{{scores[2]}}</div></h2>
+            <input type="range" min="0" max="10" v-model="scores[2]">
+          </div>
+          <div><h2>Total: {{scores_sum()}}</h2></div>
+          <div><textarea v-model="comments" ></textarea></div>
+        </div>
+        
       </div>
-      <div id="scores">
-        <div>
-          <h2>Content <div class="float-right">{{scores[0]}}</div></h2>
-          <input type="range" min="0" max="10" v-model="scores[0]">
-        </div>
-        <div>
-          <h2>Business Model <div class="float-right">{{scores[1]}}</div></h2>
-          <input type="range" min="0" max="10" v-model="scores[1]">
-        </div>
-        <div>
-          <h2>Presentation <div class="float-right">{{scores[2]}}</div></h2>
-          <input type="range" min="0" max="10" v-model="scores[2]">
-        </div>
-        <div><h2>Total: {{scores_sum()}}</h2></div>
-        <div><textarea v-model="comments" ></textarea></div>
+      <div v-else>
+        <div v-if="!judgeDetails.id">Preparing Your Profile</div>
+        <div v-else-if="!activeProject || !activeProject.id">Waiting for contestant</div>
       </div>
     </div>
 
@@ -55,8 +68,10 @@
         data: {
           name: null,
           activeProject: {},
+          judgeDetails: {},
           scores: [0,0,0],
           comments: '',
+          prev_id: null,
         },
         methods: {
           scores_sum: function(){
@@ -64,22 +79,35 @@
             return _.sumBy(vm.scores, function(o) { return +o; });
           },
 
-          update_scores: function(){
+          update_scores: _.debounce(function(){
             let vm = this;
             // _.debounce(function () {
               judge_sendScores(vm.activeProject.id, vm.scores, vm.comments);
             // }, 300)
-          }
+          },300)
         },
         watch: {
           activeProject: function(e){
             console.log(e);
+            if(e == null) return;
+            if(e.id == this.prev_id) return;
+
+            this.scores = [0,0,0];
+            this.comments = '';
+
+            this.prev_id = e.id;
+
           },
           scores: function(){
-            this.update_scores();
+            if(this.activeProject.id){
+              this.update_scores();
+            }
+              
           },
           comments: function(){
-            this.update_scores();
+            if(this.activeProject.id){
+              this.update_scores();
+            }
           },
         }
       });

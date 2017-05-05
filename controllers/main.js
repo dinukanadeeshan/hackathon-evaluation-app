@@ -36,7 +36,7 @@ rest.getProjectsData(function(data){
 
 module.exports = {
     saveSocket : function(_id, cb){
-        rest.saveSocket({'socket': _id}, cb)
+        // rest.saveSocket({'socket': _id}, cb)
     },
     getLastProject : function(cb) {
         rest.getProjectState(cb);
@@ -60,9 +60,9 @@ module.exports = {
     // rest
     getJudges: function(cb){
         cb(judges);
-        console.log('[socket.js] judges');
-        console.log('--------------------');
-        console.log(judges);
+        // console.log('[socket.js] judges');
+        // console.log('--------------------');
+        // console.log(judges);
     },
 
     addJudge: function(_socket_id, cb){
@@ -88,6 +88,19 @@ module.exports = {
     
     getJudgesMapping: function(cb){
         cb(judges_map);
+    },
+    getJudgesMapping_single: function(_id, cb){
+        let _judge_info = _.find(judges_map, function(o) { return _.isEqual(o.socket_id, _id); });
+
+        if(_judge_info){
+            cb(judges_map[_judge_info.id]);
+        } else {
+            console.log(_id, 'not found');
+            // console.log('----------------');
+            // console.log(judges_map);
+            // console.log('----------------');
+        }
+
     },
     
     editJudges: function(data, cb){
@@ -124,11 +137,16 @@ module.exports = {
         this.activeProjectId = id;
         cb(projects[id]);
     },
+    getActiveProject: function(cb){
+        cb(projects[this.activeProjectId]);
+    },
 
     setJudgeScores: function(socket_id, data, cb){
         let judge = _.find(judges_map, function(o) { return _.isEqual(o.socket_id, socket_id) });
         
-        console.log(judge);
+        // console.log(judge);
+        if(!judge) {return;}
+        
         let judge_id= judge.id;
         let _project_id = data.project_id;
         let _scores = data.scores;

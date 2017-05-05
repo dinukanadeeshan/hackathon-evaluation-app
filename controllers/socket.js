@@ -5,9 +5,9 @@ module.exports = function(http){
 
     io.on('connection', function(socket){
         console.log('[socket.js] a user connected');
-        controller.saveSocket({'socket': socket.id}, function(result){
-            console.log('[socket.js] data saved')
-        })
+        // controller.saveSocket({'socket': socket.id}, function(result){
+        //     console.log('[socket.js] data saved')
+        // })
 
 
         socket.on('connection', function(connection_type){
@@ -66,6 +66,7 @@ module.exports = function(http){
                 });
 
                 socket.on('reload_judge', function(id){
+                    console.log('[reload_judge]', id)
                     socket.to(id).emit('refresh');
                 });
 
@@ -89,6 +90,7 @@ module.exports = function(http){
                     controller.editProjects(data, function(){
                         io.emit('state_updated');
                     });
+
                 });
                 socket.on('set_active_project', function(id){
                     controller.setActiveProject(id, function(active_project_data){
@@ -124,6 +126,19 @@ module.exports = function(http){
                 });
                 
                 
+                socket.on('get_judge_data', function(){
+                    controller.getActiveProject(function(active_project_data){
+                        io.emit('update_active_project', active_project_data);
+                    });
+                    controller.getJudges(function(data){
+                        socket.emit('judge_data', data);
+                    })
+                    controller.getJudgesMapping_single(socket.id, function(data){
+                        console.log(data);
+                        socket.to(data[socket_id]).emit('judges_mapping_data', data);
+                    })
+                });
+
                 socket.on('judge_name', function(_name){
                     controller.setJudgeName(socket.id, _name);
                     io.emit('state_updated');
@@ -137,6 +152,20 @@ module.exports = function(http){
                     });
                     
                 });
+
+
+                socket.on('state_updated_need_info', function(){
+                    controller.getActiveProject(function(active_project_data){
+                        io.emit('update_active_project', active_project_data);
+                    });
+                    controller.getJudges(function(data){
+                        socket.emit('judge_data', data);
+                    })
+                    controller.getJudgesMapping_single(socket.id, function(_data){
+                        console.log(_data);
+                        socket.emit('judges_mapping_data', _data);
+                    })
+                })
 
                 socket.on('disconnect', function(){
                     controller.unsetJudge(socket.id)

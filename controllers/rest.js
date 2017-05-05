@@ -37,8 +37,12 @@ module.exports = {
             db = database;
             db.collection('Judges').findOne({_id:101}, function (err, data) {
                 if (err) return console.log(err)
+                if(!data){
+                    return;
+                }
+
                 delete data._id;
-                console.log(data)
+                // console.log(data)
                 cb(data);
             });
         });
@@ -65,6 +69,8 @@ module.exports = {
             db = database;
             db.collection('Projects').findOne({_id:101}, function (err, data) {
                 if (err) return console.log(err)
+                if(!data) return;
+            
                 delete data._id;
                 console.log(data)
                 cb(data);
