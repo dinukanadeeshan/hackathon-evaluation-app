@@ -14,12 +14,12 @@
 
 <body>
   <div class="container-fluid bg-inverse">
-    <div class="header py-4">
-      <h1 class="label-accent">
+    <div class="header py-4 px-4 bg-dark-1" style="margin: 0 -1rem">
+      <h1 class="c-accent">
         Admin Panel
         <div class="float-right">
-        <a href="/" class="btn btn-primary">Home</a>
-        <a href="#" class="btn btn-primary" onclick="reloadAllClients()">Reload clients</a>
+        <a href="/" class="btn btn-accent text-accent">Home</a>
+        <a href="#" class="btn btn-accent text-accent" onclick="reloadAllClients()">Reload clients</a>
         
       </div>
       </h1>
@@ -27,23 +27,27 @@
       
     </div>
     <div class="clearfix"></div>
-
+    <div class="alert alert-danger" v-show="_.size(projects)==0">No judges connected</div>
+    <div class="alert alert-danger">No Judge Mapping Created</div>
+    <div class="alert alert-danger">No Projects Created</div>
     <div id="app">
-      <div id="judges">
+      <div class="">
+      <div id="judges col-md-4">
         <h3>Judges</h3>
-        <div>
-          <table>
+        <small>Connections available online on <code>'/judge'</code></small>
+        <div class="my-2">
+          <table class="table table-striped">
             <tr>
-              <th>socket id</th>
-              <th>judge name</th>
-              <th>actions</th>
+              <th>Socket ID</th>
+              <th>Judge Name <small>(given)</small></th>
+              <th>Actions</th>
             </tr>
             <tr v-for="judge in judges">
               <td>{{judge.socket_id}}</td>
               <td>{{judge.name}}</td>
               <td>
-                <a href="#" class="btn bn-primary" @click.prevent="kickJudge(judge.socket_id)">Kick</a>
-                <a href="#" class="btn bn-primary" @click.prevent="reloadJudge(judge.socket_id)">Reload</a>
+                <a href="#" class="btn btn-accent text-accent" @click.prevent="kickJudge(judge.socket_id)">Kick</a>
+                <a href="#" class="btn btn-accent text-accent" @click.prevent="reloadJudge(judge.socket_id)">Reload</a>
               </td>
             </tr>
           </table>
@@ -51,12 +55,17 @@
         <hr>
         <h3>Judges Mapping</h3>
         <form action="" @submit.prevent="createNewJudge">
-          <input type="text" v-model="newJudge.name" placeholder="Full Name">
-          <input type="text" v-model="newJudge.company" placeholder="Company">
-          <input type="submit" value="Add New Judge">
+            <div class="form-inline padded panel panel-filled">
+                <p class="">Create New Judge</p>
+                <div class="panel-body">
+                  <input class="form-control" type="text" v-model="newJudge.name" placeholder="Full Name">
+                  <input class="form-control" type="text" v-model="newJudge.company" placeholder="Company">
+                  <input class="btn btn-accent text-accent" type="submit" value="Add New Judge">
+                </div>
+            </div>
         </form>
         <hr>
-        <table class="table-responsive">
+        <table class="table table-striped">
           <tr>
             <th>id</th>
             <th>name</th>
@@ -64,26 +73,28 @@
             <th>socket</th>
             <th>actions</th>
           </tr>
-        <tr v-for="judge in judges_mapping">
-          <td><input type="text" v-model="judge.id" placeholder="ID"></td>
-          <td><input type="text" v-model="judge.name" placeholder="Full Name"></td>
-          <td><input type="text" v-model="judge.company" placeholder="Company"></td>
-          <td><input type="text" v-model="judge.socket_id" placeholder="Socket ID"></td>
-          <td><input type="button" value="Remove" @click="removeJudgeFromMapping(judge.id)"></td>
+        <tr v-for="judge in judges_mapping" class="padded">
+          <td><input class="form-control" type="text" v-model="judge.id" placeholder="ID"></td>
+          <td><input class="form-control" type="text" v-model="judge.name" placeholder="Full Name"></td>
+          <td><input class="form-control" type="text" v-model="judge.company" placeholder="Company"></td>
+          <td><input class="form-control" type="text" v-model="judge.socket_id" placeholder="Socket ID"></td>
+          <td><input class="btn btn-accent text-accent" type="button" value="Remove" @click="removeJudgeFromMapping(judge.id)"></td>
         </tr>
         </table>
         <hr>  
-        <a href="#" class="btn btn-primary" @click="update_judges_mapping">Update mappings</a>
+        <a href="#" class="btn btn-accent text-accent d-block" @click="update_judges_mapping">Update mappings</a>
         <hr>
       </div>
-      <div id="projects">
-        <form @submit.prevent="createNewProject">
-          <input type="text" v-model="newProject.idea_title" placeholder="Title">
-          <input type="text" v-model="newProject.idea_description" placeholder="Description">
-          <input type="text" v-model="newProject.student_name" placeholder="Idea Owner">
-          <input type="submit" value="Add New Project">
+      <hr>
+      <div id="projects" class="py-5">
+        <h2>Projects</h2>
+        <form @submit.prevent="createNewProject" class="form-inline padded">
+          <input class="form-control" type="text" v-model="newProject.idea_title" placeholder="Title">
+          <input class="form-control" type="text" v-model="newProject.idea_description" placeholder="Description">
+          <input class="form-control" type="text" v-model="newProject.student_name" placeholder="Idea Owner">
+          <input class="btn btn-accent text-accent" type="submit" value="Add New Project">
         </form>
-        <table>
+        <table class="table table-striped">
           <tr>
             <th>id</th>
             <th>owner</th>
@@ -92,17 +103,17 @@
             <th>actions</th>
           </tr>
           <tr v-for="project in projects">
-            <td><input type="text" v-model="project.id" placeholder="ID"></td>
-            <td><input type="text" v-model="project.student_name" placeholder="Idea Owner"></td>
-            <td><input type="text" v-model="project.idea_title" placeholder="Title"></td>
-            <td><input type="text" v-model="project.idea_description" placeholder="Description"></td>
+            <td><input class="form-control" type="text" v-model="project.id" placeholder="ID"></td>
+            <td><input class="form-control" type="text" v-model="project.student_name" placeholder="Idea Owner"></td>
+            <td><input class="form-control" type="text" v-model="project.idea_title" placeholder="Title"></td>
+            <td><input class="form-control" type="text" v-model="project.idea_description" placeholder="Description"></td>
             <td>
               <a href="#" class="btn btn-primary" @click="removeProjectFromListing(project.id)">Remove</a>
               <a href="#" class="btn btn-primary" @click="setActiveProject(project.id)">Set Active</a>
             </td>
           </tr>
         </table>
-        <a href="#" class="btn btn-primary" @click.stop="update_projects">Update projects</a>
+        <a href="#" class="btn btn-accent text-accent d-block" @click.stop="update_projects">Update projects</a>
       </div>
 
       <!--
@@ -115,18 +126,18 @@
 
 
        -->
-
-      <div id="scores" class="col-md-12">
+      <hr>
+      <div id="scores" class="py-5">
         <h2>Scores</h2>
-        <label>Sorted by marks<input type="checkbox" v-model="scores_sorted"></label>
-      <table class="table">
+        <label class="d-flex justify-content-center"><input class="" type="checkbox" v-model="scores_sorted"> <span>Sorted by marks</span></label>
+      <table class="table table-striped">
         <thead>
           <tr>
-            <th rowspan="2">ID</th>
-            <th rowspan="2">Project</th>
-            <th>Scores</th>
-            <th>Grand Total</th>
-            <th rowspan="2">Comments</th>
+            <th rowspan="2" style="text-align: center; vertical-align: middle;">ID</th>
+            <th rowspan="2" style="text-align: center; vertical-align: middle;">Project</th>
+            <th style="text-align: center; vertical-align: middle;">Scores</th>
+            <th rowspan="2" style="text-align: center; vertical-align: middle;">Grand Total</th>
+            <th rowspan="2" style="text-align: center; vertical-align: middle;">Comments</th>
           </tr>
         <tr>
           <th class="d-flex justify-content-lg-around">
@@ -169,6 +180,7 @@
         </tbody>
       </table>
       </div>
+    </div>
     </div>
   </div>
 
