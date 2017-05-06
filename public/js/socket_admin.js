@@ -8,18 +8,21 @@ socket.on('connection_status', function(data){
         socket.emit('get_admin_data');
         socket.on('project_data', function(_project_data){
             console.log('_project_data', _project_data)
+            if(!_project_data) return;
             delete _project_data['_id'];
             app.projects = _project_data;
             _projects_count = _.size(app.projects)
         })
         socket.on('judges_data', function(_judges_data){
             console.log('_judges_data', _judges_data)
-
+            if(!_judges_data) return;
             delete _judges_data['_id'];
             app.judges = _judges_data;
         })
         socket.on('judges_mapping_data', function(_judges_data){
             console.log('_judges_mapping_data', _judges_data)
+
+            if(!_judges_data) return;
 
             delete _judges_data['_id'];
             app.judges_mapping = _judges_data;

@@ -8,6 +8,7 @@ socket.on('refresh', function(data){
     location.reload();
 })
 socket.on('kick', function(data){
+	localStorage.removeItem('judge_name');
     window.location.replace('/');
 })
 socket.on('update_active_project', function(data){

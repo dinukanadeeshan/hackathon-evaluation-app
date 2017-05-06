@@ -1,73 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="en" class="gr__localhost"><head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/judges.css">
   </head>
-  <body>
-    <div id="app" class="container">
-    <img src="img/logo.png" style="width: 300px" class="mt-4" alt="">
-    <h1 class="">Final Selections</h1>
-      
-      <div class="judges" v-if="judgeDetails.id">
-        <span>{{judgeDetails.socket_id}}</span>
-        <span>{{judgeDetails.name}}</span>
-        <span>{{judgeDetails.company}}</span>
-      </div>
-      <div class="judges" v-else>
-        <span>{{name}}</span>
-      </div>
-      <div class="activeProject" v-if="activeProject && activeProject.id && judgeDetails.id">
-        <div id="project" v-if="activeProject">
-          <span>{{activeProject.id}}</span>
-          <span>{{activeProject.student_name}}</span>
-          <span>{{activeProject.idea_title}}</span>
-          <span>{{activeProject.idea_description}}</span>
-        </div>
-        <div id="scores">
-          <div>
-            <h2>Completeness + Marketability <span>30%</span><div class="float-right">{{scores[0]}}</div></h2>
-            <input type="range" min="0" max="10" v-model="scores[0]">
-          </div>
-          <div>
-            <h2>User Experience <span>30%</span> <div class="float-right">{{scores[1]}}</div></h2>
-            <input type="range" min="0" max="10" v-model="scores[1]">
-          </div>
-          <div>
-            <h2>Presentation + Demo <span>20%</span><div class="float-right">{{scores[2]}}</div></h2>
-            <input type="range" min="0" max="10" v-model="scores[2]">
-          </div>
-          <div>
-            <h2>Difficulty of Developing <span>20%</span><div class="float-right">{{scores[3]}}</div></h2>
-            <input type="range" min="0" max="10" v-model="scores[3]">
-          </div>
-          <div><h2>Total: {{scores_sum()}}</h2></div>
-          <div><textarea v-model="comments" ></textarea></div>
-        </div>
-        
-      </div>
-      <div v-else>
-        <div class="animated infinite flash" v-if="!judgeDetails.id">Authorizing your profile...</div>
-        <div class="animated infinite flash" v-else-if="!activeProject || !activeProject.id">Waiting for contestant...</div>
-      </div>
-    </div>
+  <body data-gr-c-s-loaded="true">
+    <h1>Judge Panel</h1>
+    <div id="app"><div class="judges">
+        dXrVgBLyA1x_3bJFAAC6
+        Ishan Madhusanka
+        University of Peradeniya
+      </div> <div class="activeProject"><div id="project">
+          3
+          iMad madhusanka
+          New Project
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non  proident, sunt in culpa qui officia deserunt mollit anim id est laborum. 
+        </div> <div id="scores"><div><h2>Completeness + Marketability <span>30%</span><div class="float-right">8</div></h2> <input type="range" min="0" max="10"></div> <div><h2>User Experience <span>30%</span> <div class="float-right">7</div></h2> <input type="range" min="0" max="10"></div> <div><h2>Presentation + Demo <span>20%</span><div class="float-right">8</div></h2> <input type="range" min="0" max="10"></div> <div><h2>Difficulty of Developing <span>20%</span><div class="float-right">10</div></h2> <input type="range" min="0" max="10"></div> <div><h2>Total: 8.1</h2></div> <div><textarea></textarea></div></div></div></div>
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="js/jquery-3.2.1.min.js"></script>
-    <script src="js/tether.min.js" ></script>
-    <script src="js/bootstrap.min.js" ></script>
+    <script src="js/tether.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 
     <script src="js/lodash.min.js"></script>
 
     <!-- include Vue and Axios -->
-    <script src="js/axios.min.js" ></script>
-    <script src="js/vue.js" ></script>
+    <script src="js/axios.min.js"></script>
+    <script src="js/vue.js"></script>
 
     <script>
       var app = new Vue({
@@ -138,13 +100,13 @@
     </script>
 
     <!-- include Socket.io scripts -->
-    <script src="js/socket.io.js" ></script>
-    <script src="js/socket_default.js" ></script>
-    <script src="js/socket_judge.js" ></script>
+    <script src="js/socket.io.js"></script>
+    <script src="js/socket_default.js"></script>
+    <script src="js/socket_judge.js"></script>
 
     <script>
 
     </script>
 
-  </body>
-</html>
+  
+</body></html>

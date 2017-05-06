@@ -25,7 +25,7 @@ socket.on('connection_status', function(data){
             judge_setName(name);
         } else {
             name = prompt('Please enter your name');
-            judge_setName(name);
+            if(name) judge_setName(name);
         }
     }
 })

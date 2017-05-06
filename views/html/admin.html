@@ -11,15 +11,30 @@
   <link rel="stylesheet" href="css/admin-dark.css">
   <link rel="stylesheet" href="css/admin.css">
 </head>
-
+<style>
+  body{
+    font-size: 10pt;
+  }
+  input{
+    font-size: 10pt !important;
+  }
+</style>
 <body>
-  <div class="container-fluid bg-inverse">
+  <div class="container-fluid bg-inverse" id="app">
     <div class="header py-4 px-4 bg-dark-1" style="margin: 0 -1rem">
       <h1 class="c-accent">
-        Admin Panel
-        <div class="float-right">
-        <a href="/" class="btn btn-accent text-accent">Home</a>
-        <a href="#" class="btn btn-accent text-accent" onclick="reloadAllClients()">Reload clients</a>
+        <span>Admin Panel</span>
+        <div class="float-right d-flex align-items-center">
+        <div class="stats mr-2 d-flex" >
+          <h3 class="h4-responsive m-0 mr-4">{{_.size(judges)}} <span class="d-block" style="font-size: 10pt; font-weight: normal;">Connections</span></h3>
+          <h3 class="h4-responsive m-0 mr-4">{{_.size(judges_mapping)}} <span class="d-block" style="font-size: 10pt; font-weight: normal;">Judges</span></h3>
+          <h3 class="h4-responsive m-0 mr-4">{{_.size(projects)}} <span class="d-block" style="font-size: 10pt; font-weight: normal;">Projects</span></h3>
+        </div>
+        <div>
+          <a href="/" class="btn btn-accent text-accent btn-sm">Home</a>
+          <a href="#" class="btn btn-accent text-accent btn-sm" onclick="reloadAllClients()">Reload clients</a>
+          
+        </div>
         
       </div>
       </h1>
@@ -27,94 +42,104 @@
       
     </div>
     <div class="clearfix"></div>
-    <div class="alert alert-danger" v-show="_.size(projects)==0">No judges connected</div>
-    <div class="alert alert-danger">No Judge Mapping Created</div>
-    <div class="alert alert-danger">No Projects Created</div>
-    <div id="app">
-      <div class="">
-      <div id="judges col-md-4">
-        <h3>Judges</h3>
-        <small>Connections available online on <code>'/judge'</code></small>
-        <div class="my-2">
+    <div>
+      <div class="alert alert-danger" v-show="_.size(judges)==0">No judges connected</div>
+      <div class="alert alert-danger" v-show="_.size(judges_mapping)==0">No Judge Mapping Created</div>
+      <div class="alert alert-danger" v-show="_.size(projects)==0">No Projects Created</div>
+      <div class="row">
+        <div id="judges" class="col-md-8">
+          <h3>Judges</h3>
+          <small>Connections available online on <code>'/judge'</code></small>
+          <div class="my-2">
+            <table class="table table-striped table-responsive ">
+              <tr>
+                <th>Socket ID</th>
+                <th>Judge Name <small>(given)</small></th>
+                <th>Actions</th>
+              </tr>
+              <tr v-for="judge in judges">
+                <td><input type="text" class="disabled form-control"  onClick="this.select();" v-model="judge.socket_id"  :class="{'text-danger': ifSocketNotound_judgeNotSet(judge.socket_id)}"></td>
+                <td style="vertical-align: middle;">{{judge.name?judge.name:'[not set yet]'}}</td>
+                <td>
+                  <a href="#" class="btn btn-accent text-accent btn-sm" @click.prevent="kickJudge(judge.socket_id)">Kick</a>
+                  <a href="#" class="btn btn-accent text-accent btn-sm" @click.prevent="reloadJudge(judge.socket_id)">Reload</a>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <hr>
+        </div><div class="col-md-4">
+          <h3>Judges Mapping</h3>
+          <small>Create Judge Profile Information</small>
+          <form action="" @submit.prevent="createNewJudge" class="pt-1">
+              <div class="form-inline padded panel panel-filled">
+                  <p class="py-0 mb-0">Create New Judge</p>
+                  <div class="panel-body p-0">
+                    <input class="form-control" type="text" v-model="newJudge.name" placeholder="[Full Name]">
+                    <input class="form-control" type="text" v-model="newJudge.company" placeholder="[Company]">
+                    <input class="btn btn-accent text-accent" type="submit" value="Add New Judge">
+                  </div>
+              </div>
+          </form>
+          </div>
+          <hr>
+          <div class="col-md-12">
+          <h3>Judge Socket Mapping</h3>
+          <table class="table table-striped table-responsive">
+            <tr>
+              <th>id</th>
+              <th>name</th>
+              <th>company</th>
+              <th>socket</th>
+              <th>actions</th>
+            </tr>
+          <tr v-for="judge in judges_mapping" class="padded">
+            <td><input class="form-control" type="text" v-model="judge.id" placeholder="[ID]" style="width: 100px"></td>
+            <td><input class="form-control" type="text" v-model="judge.name" placeholder="[Full Name]"></td>
+            <td><input class="form-control" type="text" v-model="judge.company" placeholder="[Company]"></td>
+            <td><input class="form-control" type="text" v-model="judge.socket_id" placeholder="[Socket ID]" onClick="this.select();" :class="{'text-danger': ifSocketNotound(judge.socket_id)}"></td>
+            <td><input class="btn btn-accent text-accent btn-sm" type="button" value="Remove" @click="removeJudgeFromMapping(judge.id)"></td>
+          </tr>
+          </table>
+          <hr>  
+          <a href="#" class="btn btn-accent text-accent d-block" @click="update_judges_mapping">Update mappings</a>
+          <hr>
+        </div>
+        </div>
+        <div class="row">
+        <hr>
+        <div id="projects" class="py-5 col-md-12">
+          <div class="d-flex">
+            <h2 style="flex-grow: 1">Projects</h2>
+            <form @submit.prevent="createNewProject" class="form-inline padded">
+              <input class="form-control" type="text" v-model="newProject.idea_title" placeholder="[Title]">
+              <input class="form-control" type="text" v-model="newProject.idea_description" placeholder="[Description]">
+              <input class="form-control" type="text" v-model="newProject.student_name" placeholder="[Idea Owner]">
+              <input class="btn btn-accent text-accent" type="submit" value="Add New Project">
+            </form>
+          </div>
+          <hr>
           <table class="table table-striped">
             <tr>
-              <th>Socket ID</th>
-              <th>Judge Name <small>(given)</small></th>
-              <th>Actions</th>
+              <th>id</th>
+              <th>owner</th>
+              <th>title</th>
+              <th>description</th>
+              <th>actions</th>
             </tr>
-            <tr v-for="judge in judges">
-              <td>{{judge.socket_id}}</td>
-              <td>{{judge.name}}</td>
+            <tr v-for="project in projects" >
+              <td><input class="form-control" :class="{'text-warning': project.id==activeProject.id}" type="text" v-model="project.id" placeholder="[ID]" style="width: 100px;"></td>
+              <td><input class="form-control" :class="{'text-warning': project.id==activeProject.id}" type="text" v-model="project.student_name" placeholder="[Idea Owner]"></td>
+              <td><input class="form-control" :class="{'text-warning': project.id==activeProject.id}" type="text" v-model="project.idea_title" placeholder="[Title]"></td>
+              <td><input class="form-control" :class="{'text-warning': project.id==activeProject.id}" type="text" v-model="project.idea_description" placeholder="[Description]"></td>
               <td>
-                <a href="#" class="btn btn-accent text-accent" @click.prevent="kickJudge(judge.socket_id)">Kick</a>
-                <a href="#" class="btn btn-accent text-accent" @click.prevent="reloadJudge(judge.socket_id)">Reload</a>
+                <a href="#" class="btn btn-accent btn-sm" @click.prevent="removeProjectFromListing(project.id)">Remove</a>
+                <a href="#" class="btn btn-accent btn-sm" @click.prevent="setActiveProject(project.id)">Set Active</a>
               </td>
             </tr>
           </table>
+          <a href="#" class="btn btn-accent text-accent d-block" @click.prevent="update_projects">Update projects</a>
         </div>
-        <hr>
-        <h3>Judges Mapping</h3>
-        <form action="" @submit.prevent="createNewJudge">
-            <div class="form-inline padded panel panel-filled">
-                <p class="">Create New Judge</p>
-                <div class="panel-body">
-                  <input class="form-control" type="text" v-model="newJudge.name" placeholder="Full Name">
-                  <input class="form-control" type="text" v-model="newJudge.company" placeholder="Company">
-                  <input class="btn btn-accent text-accent" type="submit" value="Add New Judge">
-                </div>
-            </div>
-        </form>
-        <hr>
-        <table class="table table-striped">
-          <tr>
-            <th>id</th>
-            <th>name</th>
-            <th>company</th>
-            <th>socket</th>
-            <th>actions</th>
-          </tr>
-        <tr v-for="judge in judges_mapping" class="padded">
-          <td><input class="form-control" type="text" v-model="judge.id" placeholder="ID"></td>
-          <td><input class="form-control" type="text" v-model="judge.name" placeholder="Full Name"></td>
-          <td><input class="form-control" type="text" v-model="judge.company" placeholder="Company"></td>
-          <td><input class="form-control" type="text" v-model="judge.socket_id" placeholder="Socket ID"></td>
-          <td><input class="btn btn-accent text-accent" type="button" value="Remove" @click="removeJudgeFromMapping(judge.id)"></td>
-        </tr>
-        </table>
-        <hr>  
-        <a href="#" class="btn btn-accent text-accent d-block" @click="update_judges_mapping">Update mappings</a>
-        <hr>
-      </div>
-      <hr>
-      <div id="projects" class="py-5">
-        <h2>Projects</h2>
-        <form @submit.prevent="createNewProject" class="form-inline padded">
-          <input class="form-control" type="text" v-model="newProject.idea_title" placeholder="Title">
-          <input class="form-control" type="text" v-model="newProject.idea_description" placeholder="Description">
-          <input class="form-control" type="text" v-model="newProject.student_name" placeholder="Idea Owner">
-          <input class="btn btn-accent text-accent" type="submit" value="Add New Project">
-        </form>
-        <table class="table table-striped">
-          <tr>
-            <th>id</th>
-            <th>owner</th>
-            <th>title</th>
-            <th>description</th>
-            <th>actions</th>
-          </tr>
-          <tr v-for="project in projects">
-            <td><input class="form-control" type="text" v-model="project.id" placeholder="ID"></td>
-            <td><input class="form-control" type="text" v-model="project.student_name" placeholder="Idea Owner"></td>
-            <td><input class="form-control" type="text" v-model="project.idea_title" placeholder="Title"></td>
-            <td><input class="form-control" type="text" v-model="project.idea_description" placeholder="Description"></td>
-            <td>
-              <a href="#" class="btn btn-primary" @click="removeProjectFromListing(project.id)">Remove</a>
-              <a href="#" class="btn btn-primary" @click="setActiveProject(project.id)">Set Active</a>
-            </td>
-          </tr>
-        </table>
-        <a href="#" class="btn btn-accent text-accent d-block" @click.stop="update_projects">Update projects</a>
-      </div>
 
       <!--
         .d8888.  .o88b.  .d88b.  d8888b. d88888b .d8888.
@@ -126,61 +151,69 @@
 
 
        -->
-      <hr>
-      <div id="scores" class="py-5">
+      </div><div class="row">
+      <div id="scores" class="py-5 col-md-12">
         <h2>Scores</h2>
-        <label class="d-flex justify-content-center"><input class="" type="checkbox" v-model="scores_sorted"> <span>Sorted by marks</span></label>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th rowspan="2" style="text-align: center; vertical-align: middle;">ID</th>
-            <th rowspan="2" style="text-align: center; vertical-align: middle;">Project</th>
-            <th style="text-align: center; vertical-align: middle;">Scores</th>
-            <th rowspan="2" style="text-align: center; vertical-align: middle;">Grand Total</th>
-            <th rowspan="2" style="text-align: center; vertical-align: middle;">Comments</th>
-          </tr>
-        <tr>
-          <th class="d-flex justify-content-lg-around">
-            <span>Judge ID</span>
-            <span>Innovation</span>
-            <span>Idea</span>
-            <span>Completion</span>
-            <span>Total</span>
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="project in projects_sorted">
-          <td>{{project.id}}</td>
-          <td>
-            <div>{{project.idea_title}}</div>
-            <div>{{project.student_name}}</div>
-          </td>
-          <td>
-            <div v-for="(score, id) in project.scores">
-              <div class="d-flex justify-content-lg-around">
-                <span>{{id}}</span>
-                <span>{{score.scores[0]}}</span>
-                <span>{{score.scores[1]}}</span>
-                <span>{{score.scores[2]}}</span>
-                <span>{{score_sum(score.scores)}}</span>
-              </div>
-            </div >
-          </td>
-          <td>{{score_grand_total(project)}}</td>
-          <td>
-            
-            <div v-for="score in project.scores">
-              <div>
-                {{score.comments}}
-              </div>
-            </div >
-          </td>
-        </tr>
-        </tbody>
-      </table>
+        <span class="d-flex justify-content-end">
+          <span style="line-height: 2rem" class="mr-2">Sorted by marks</span>
+          <label class="switch">
+            <input class="" type="checkbox" v-model="scores_sorted">
+            <div class="slider round"></div>
+          </label>
+        </span>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th rowspan="2" style="text-align: center; vertical-align: middle;">ID</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle;">Project</th>
+                <th style="text-align: center; vertical-align: middle;">Scores</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle;">Grand Total</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle;">Comments</th>
+              </tr>
+            <tr>
+              <th class="d-block" style="position: relative;">
+                <span class="text-center d-inline-block" style="width: 16%">Judge ID</span>
+                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Completeness and Marketability <br><span style="font-size: 10pt; font-weight: lighter;">30%</span></span>
+                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">User Experience <br> <span style="font-size: 10pt; font-weight: lighter;">30%</span></span>
+                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Presentation + Demo <br> <span style="font-size: 10pt; font-weight: lighter;">20%</span></span>
+                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Difficulty of Developing <br> <span style="font-size: 10pt; font-weight: lighter;">20%</span></span>
+                <span class="text-center d-inline-block" style="width: 16%">Total</span>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="project in projects_sorted">
+              <td>{{project.id}}</td>
+              <td>
+                <div>{{project.idea_title}}</div>
+                <div class="small">{{project.student_name}}</div>
+              </td>
+              <td>
+                <div v-for="(score, id) in project.scores">
+                  <div class="d-block" style="position: relative;">
+                    <span class="text-center d-inline-block" style="width: 16%;">{{id}}</span>
+                    <span class="text-center d-inline-block" style="width: 16%;">{{score.scores[0]}}</span>
+                    <span class="text-center d-inline-block" style="width: 16%;">{{score.scores[1]}}</span>
+                    <span class="text-center d-inline-block" style="width: 16%;">{{score.scores[2]}}</span>
+                    <span class="text-center d-inline-block" style="width: 16%;">{{score.scores[3]}}</span>
+                    <span class="text-center d-inline-block" style="width: 16%;">{{score_sum(score.scores)}}</span>
+                  </div>
+                </div >
+              </td>
+              <td class="text-center">{{score_grand_total(project)}}</td>
+              <td>
+                
+                <div v-for="score in project.scores">
+                  <div>
+                    {{score.comments}}
+                  </div>
+                </div >
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
     </div>
   </div>
 
@@ -252,16 +285,37 @@
         },
 
         score_sum: function(scores){
-          return _.sumBy(scores, function(o){ return +o; });
+          // return _.sumBy(scores, function(o){ return +o; });
+          let score = scores[0]*0.3 + scores[1]*0.3 + scores[2]*0.2 + scores[3]*0.2;
+          return _.round(score, 2)
         },
         score_grand_total: function(project){
-              let __score_sum_arrays = (_.map(_.toArray(project.scores), function(o){
-                return o.scores;
-              }));
-              let __score_sum_arrays_flattened = _.flatten(__score_sum_arrays);
-              let __score_sum_arrays_total = _.sumBy(__score_sum_arrays_flattened, function(o){ return +o ;});
 
-              return __score_sum_arrays_total;
+          let scores_all = (_.toArray(project.scores));  // array of lengths of judges
+
+          let number_of_judges = _.size(app.judges)
+
+          let _grand_total = 0;
+          for (var i = 0; i < scores_all.length; i++) {
+            let scores_per_project = scores_all[i].scores;
+            _grand_total += app.score_sum(scores_per_project);
+          }
+
+          return _.round(_grand_total/number_of_judges, 2);
+        },
+        ifSocketNotound: function(_socket_id){
+          if(this.judges[_socket_id]){
+            return false;
+          }
+
+          return true;
+        },
+        ifSocketNotound_judgeNotSet: function(_socket_id){
+          if(_.find(app.judges_mapping, { 'socket_id': _socket_id})){
+            return false;
+          }
+
+          return true;
         }
       },
       computed: {
