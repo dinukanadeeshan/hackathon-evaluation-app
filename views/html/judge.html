@@ -12,43 +12,66 @@
   </head>
   <body>
     <div id="app" class="container">
-    <img src="img/logo.png" style="width: 300px" class="mt-4" alt="">
+    <img src="img/logo.png" style="width: 300px; margin-top: 5vh;"  alt="">
     <h1 class="">Final Selections</h1>
       
       <div class="judges" v-if="judgeDetails.id">
-        <span>{{judgeDetails.socket_id}}</span>
-        <span>{{judgeDetails.name}}</span>
-        <span>{{judgeDetails.company}}</span>
+        <div style="font-size: 14pt;">
+          <span style="font-size: 1.2em">{{judgeDetails.name}}</span>
+          <span class="text-warning">{{judgeDetails.company}}</span>
+        </div>
+        <div>
+          <span class="text-uppercase">Judge Panel</span>
+          <span class="faded small">{{judgeDetails.socket_id}}</span>
+          
+        </div>
       </div>
       <div class="judges" v-else>
-        <span>{{name}}</span>
+        <div>
+          <span style="font-size: 14pt;">{{name}}</span>
+        </div>
+        <div>
+          <span class="faded text-uppercase">Judge Panel</span>
+        </div>
       </div>
       <div class="activeProject" v-if="activeProject && activeProject.id && judgeDetails.id">
-        <div id="project" v-if="activeProject">
-          <span>{{activeProject.id}}</span>
-          <span>{{activeProject.student_name}}</span>
-          <span>{{activeProject.idea_title}}</span>
-          <span>{{activeProject.idea_description}}</span>
+        <div id="project" v-if="activeProject" @click="infoInvisible = !infoInvisible" class="background_desc mb-3" :class="{'visible': !infoInvisible}">
+          <div class="d-flex align-items-center pb-2">
+            <div class="contestantId" style="flex-shrink: 0; margin-right: 1rem"><span class="white">Contestant </span><span class="black"> #{{activeProject.id}}</span></div>
+            <div>
+              <div style="font-size: 1.2em">{{activeProject.idea_title}}</div>
+              <div class="text-uppercase text-warning">{{activeProject.student_name}}</div>
+              
+            </div>
+            
+          </div>
+          <div class="description" :class="{'description_invisible': infoInvisible}">{{activeProject.idea_description}}</div>
+          <p v-show="infoInvisible">Tap here for description</p>
+          <p v-show="!infoInvisible">Tap to hide description</p>
         </div>
-        <div id="scores">
+        <div id="scores" class="my-3">
+          <h3 class="pb-4">Scores <span class="float-right py-2" style="font-size: 14pt;">Total: {{scores_sum()}} pts</span></h3>
           <div>
-            <h2>Completeness + Marketability <span>30%</span><div class="float-right">{{scores[0]}}</div></h2>
+            <h5>Completeness + Marketability <span>30%</span><div class="float-right">{{scores[0]}} pts</div></h5>
             <input type="range" min="0" max="10" v-model="scores[0]">
           </div>
           <div>
-            <h2>User Experience <span>30%</span> <div class="float-right">{{scores[1]}}</div></h2>
+            <h5>User Experience <span>30%</span> <div class="float-right">{{scores[1]}} pts</div></h5>
             <input type="range" min="0" max="10" v-model="scores[1]">
           </div>
           <div>
-            <h2>Presentation + Demo <span>20%</span><div class="float-right">{{scores[2]}}</div></h2>
+            <h5>Presentation + Demo <span>20%</span><div class="float-right">{{scores[2]}} pts</div></h5>
             <input type="range" min="0" max="10" v-model="scores[2]">
           </div>
           <div>
-            <h2>Difficulty of Developing <span>20%</span><div class="float-right">{{scores[3]}}</div></h2>
+            <h5>Difficulty of Developing <span>20%</span><div class="float-right">{{scores[3]}} pts</div></h5>
             <input type="range" min="0" max="10" v-model="scores[3]">
           </div>
-          <div><h2>Total: {{scores_sum()}}</h2></div>
-          <div><textarea v-model="comments" ></textarea></div>
+          <div></div>
+          <div style="background: rgba(0,0,0,0.3)" class="p-3 my-2 mt-5">
+            <textarea class="form-control" v-model="comments" placeholder="Comments"></textarea>
+            <h2 class="h3-responsive my-2">Total: {{scores_sum()}} pts</h2>
+          </div>
         </div>
         
       </div>
@@ -79,6 +102,8 @@
           scores: [0,0,0,0],
           comments: '',
           prev_id: null,
+
+          infoInvisible: true,
         },
         methods: {
           scores_sum: function(){
