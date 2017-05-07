@@ -92,6 +92,12 @@ body{
   background-size: cover;
   color: #fff;
   min-height: 100vh;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 .judges div{
   display: block;
@@ -146,4 +152,51 @@ body{
 }
 h1,h2,h3,h4,h5{
   font-weight: lighter;
+}
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+#app{
+  opacity: 0 !important;
+  transition: all .1s;
+}
+#app.showApp{
+  opacity: 1 !important;
+}
+#loader{
+  position: fixed;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.home{
+  min-height: 100vh;
+  text-align: center !important;
+}
+.footer_image{
+  position: absolute;
+  padding: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 2rem;
+
+
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s !important;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0 !important;
 }

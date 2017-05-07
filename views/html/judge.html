@@ -4,172 +4,165 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/judges.css">
   </head>
   <body>
-    <div id="app" class="container">
-    <img src="img/logo.png" style="width: 300px; margin-top: 5vh;"  alt="">
-    <h1 class="">Final Selections</h1>
+    <div id="loader" class="animated">
+      <img class="animated infinite pulse" src="img/logo.png" style="width: 300px; margin-top: 5vh;"  alt="">
+    </div>
+    <div id="app" class="container animated ">
+      <img src="img/logo.png" style="width: 300px; margin-top: 5vh;"  alt="">
+      <h1 class="mt-3">Final Selections</h1>
       
-      <div class="judges" v-if="judgeDetails.id">
-        <div style="font-size: 14pt;">
-          <span style="font-size: 1.2em">{{judgeDetails.name}}</span>
-          <span class="text-warning">{{judgeDetails.company}}</span>
-        </div>
-        <div>
-          <span class="text-uppercase">Judge Panel</span>
-          <span class="faded small">{{judgeDetails.socket_id}}</span>
-          
-        </div>
-      </div>
-      <div class="judges" v-else>
-        <div>
-          <span style="font-size: 14pt;">{{name}}</span>
-        </div>
-        <div>
-          <span class="faded text-uppercase">Judge Panel</span>
-        </div>
-      </div>
-      <div class="activeProject" v-if="activeProject && activeProject.id && judgeDetails.id">
-        <div id="project" v-if="activeProject" @click="infoInvisible = !infoInvisible" class="background_desc mb-3" :class="{'visible': !infoInvisible}">
-          <div class="d-flex align-items-center pb-2">
-            <div class="contestantId" style="flex-shrink: 0; margin-right: 1rem"><span class="white">Contestant </span><span class="black"> #{{activeProject.id}}</span></div>
-            <div>
-              <div style="font-size: 1.2em">{{activeProject.idea_title}}</div>
-              <div class="text-uppercase text-warning">{{activeProject.student_name}}</div>
-              
-            </div>
+      <transition name="fade">
+        <div class="judges" v-if="judgeDetails.id">
+          <div style="font-size: 14pt;">
+            <span style="font-size: 1.2em">{{judgeDetails.name}}</span>
+            <span class="text-warning text-nowrap">{{judgeDetails.company}}</span>
+          </div>
+          <div>
+            <span class="text-uppercase">Judge Panel</span>
+            <span class="faded small">{{judgeDetails.socket_id}}</span>
             
           </div>
-          <div class="description" :class="{'description_invisible': infoInvisible}">{{activeProject.idea_description}}</div>
-          <p v-show="infoInvisible">Tap here for description</p>
-          <p v-show="!infoInvisible">Tap to hide description</p>
         </div>
-        <div id="scores" class="my-3">
-          <h3 class="pb-4">Scores <span class="float-right py-2" style="font-size: 14pt;">Total: {{scores_sum()}} pts</span></h3>
+        <div class="judges" v-else>
           <div>
-            <h5>Completeness + Marketability <span>30%</span><div class="float-right">{{scores[0]}} pts</div></h5>
-            <input type="range" min="0" max="10" v-model="scores[0]">
+            <span style="font-size: 14pt;">{{name}}</span>
           </div>
           <div>
-            <h5>User Experience <span>30%</span> <div class="float-right">{{scores[1]}} pts</div></h5>
-            <input type="range" min="0" max="10" v-model="scores[1]">
+            <span class="faded text-uppercase">Judge Panel</span>
           </div>
-          <div>
-            <h5>Presentation + Demo <span>20%</span><div class="float-right">{{scores[2]}} pts</div></h5>
-            <input type="range" min="0" max="10" v-model="scores[2]">
+        </div>
+      </transition>
+      <transition name="fade">
+        <div class="activeProject" v-if="activeProject && activeProject.id && judgeDetails.id">
+          <div id="project" v-if="activeProject" @click="infoInvisible = !infoInvisible" class="background_desc my-3" :class="{'visible': !infoInvisible}">
+            <div class="d-flex align-items-center pb-2">
+              <div class="contestantId" style="flex-shrink: 0; margin-right: 1rem"><span class="white">Contestant </span><span class="black"> #{{activeProject.id}}</span></div>
+              <div>
+                <div style="font-size: 1.2em">{{activeProject.idea_title}}</div>
+                <div class="text-uppercase text-warning">{{activeProject.student_name}}</div>
+                
+              </div>
+              
+            </div>
+            <div class="description" :class="{'description_invisible': infoInvisible}">{{activeProject.idea_description}}</div>
+            <p v-show="infoInvisible">Tap here for description</p>
+            <p v-show="!infoInvisible">Tap to hide description</p>
           </div>
-          <div>
-            <h5>Difficulty of Developing <span>20%</span><div class="float-right">{{scores[3]}} pts</div></h5>
-            <input type="range" min="0" max="10" v-model="scores[3]">
+          <div id="scores" class="my-3">
+            <h3 class="pb-4">Scores <span class="float-right py-2" style="font-size: 14pt;">Total: {{scores_sum()}} pts</span></h3>
+            <div>
+              <h5>Completeness + Marketability <span>30%</span><div class="float-right">{{scores[0]}} pts</div></h5>
+              <input type="range" min="0" max="10" v-model="scores[0]">
+            </div>
+            <div>
+              <h5>User Experience <span>30%</span> <div class="float-right">{{scores[1]}} pts</div></h5>
+              <input type="range" min="0" max="10" v-model="scores[1]">
+            </div>
+            <div>
+              <h5>Presentation + Demo <span>20%</span><div class="float-right">{{scores[2]}} pts</div></h5>
+              <input type="range" min="0" max="10" v-model="scores[2]">
+            </div>
+            <div>
+              <h5>Difficulty of Developing <span>20%</span><div class="float-right">{{scores[3]}} pts</div></h5>
+              <input type="range" min="0" max="10" v-model="scores[3]">
+            </div>
+            <div></div>
+            <div style="background: rgba(0,0,0,0.3)" class="p-3 my-2 mt-5">
+              <textarea class="form-control" v-model="comments" placeholder="Comments"></textarea>
+              <h2 class="h3-responsive my-2">Total: {{scores_sum()}} pts</h2>
+            </div>
           </div>
-          <div></div>
-          <div style="background: rgba(0,0,0,0.3)" class="p-3 my-2 mt-5">
-            <textarea class="form-control" v-model="comments" placeholder="Comments"></textarea>
-            <h2 class="h3-responsive my-2">Total: {{scores_sum()}} pts</h2>
-          </div>
+          
+        </div>
+        <div v-else>
+          <div class="animated infinite flash" v-if="!judgeDetails.id">Authorizing your profile...</div>
+          <div class="animated infinite flash" v-else-if="!activeProject || !activeProject.id">Waiting for contestant...</div>
         </div>
         
-      </div>
-      <div v-else>
-        <div class="animated infinite flash" v-if="!judgeDetails.id">Authorizing your profile...</div>
-        <div class="animated infinite flash" v-else-if="!activeProject || !activeProject.id">Waiting for contestant...</div>
-      </div>
+      </transition>
     </div>
-
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/tether.min.js" ></script>
     <script src="js/bootstrap.min.js" ></script>
-
     <script src="js/lodash.min.js"></script>
-
     <!-- include Vue and Axios -->
     <script src="js/axios.min.js" ></script>
     <script src="js/vue.js" ></script>
-
     <script>
-      var app = new Vue({
-        el: '#app',
-        data: {
-          name: null,
-          activeProject: {},
-          judgeDetails: {},
-          scores: [0,0,0,0],
-          comments: '',
-          prev_id: null,
-
-          infoInvisible: true,
-        },
-        methods: {
-          scores_sum: function(){
-            let vm = this;
-            // return _.sumBy(vm.scores, function(o) { return +o; });
-            let score_sum =  vm.scores[0]*0.3 + vm.scores[1]*0.3 + vm.scores[2]*0.2 + vm.scores[3]*0.2;
-
-            return _.round(score_sum, 2);
-          },
-
-          update_scores: _.debounce(function(){
-            let vm = this;
-            // _.debounce(function () {
-              judge_sendScores(vm.activeProject.id, vm.scores, vm.comments);
-            // }, 300)
-          },300)
-        },
-        watch: {
-          activeProject: function(e){
-            console.log(e);
-            if(e == null) return;
-            if(e.id == this.prev_id) return;
-
-            localStorage.setItem('_activeProject', JSON.stringify(app.activeProject));
-            localStorage.setItem('_scores', JSON.stringify(app.scores));
-            localStorage.setItem('_prev_id', this.prev_id);
-            
-            this.scores = [0,0,0,0];
-            this.comments = '';
-
-            this.prev_id = e.id;
-
-          },
-          scores: function(){
-            if(this.activeProject.id){
-              this.update_scores();
-            }
-              
-          },
-          comments: function(){
-            if(this.activeProject.id){
-              this.update_scores();
-            }
-          },
-        },
-        mounted: function(){
-            let _activeProject = JSON.parse(localStorage.getItem('_activeProject'));
-            let _scores = JSON.parse(localStorage.getItem('_scores'));
-            let _prev_id = localStorage.getItem('_prev_id');
-
-            if(_activeProject) this.activeProject = _activeProject;
-            if(_scores) this.scores = _scores;
-            if(_prev_id) this.prev_id = _prev_id;
-
-        }
-      });
+    var app = new Vue({
+    el: '#app',
+    data: {
+    name: null,
+    activeProject: {},
+    judgeDetails: {},
+    scores: [0,0,0,0],
+    comments: '',
+    prev_id: null,
+    infoInvisible: true,
+    },
+    methods: {
+    scores_sum: function(){
+    let vm = this;
+    // return _.sumBy(vm.scores, function(o) { return +o; });
+    let score_sum =  vm.scores[0]*0.3 + vm.scores[1]*0.3 + vm.scores[2]*0.2 + vm.scores[3]*0.2;
+    return _.round(score_sum, 2);
+    },
+    update_scores: _.debounce(function(){
+    let vm = this;
+    // _.debounce(function () {
+    judge_sendScores(vm.activeProject.id, vm.scores, vm.comments);
+    // }, 300)
+    },300)
+    },
+    watch: {
+    activeProject: function(e){
+    console.log(e);
+    if(e == null) return;
+    if(e.id == this.prev_id) return;
+    localStorage.setItem('_activeProject', JSON.stringify(app.activeProject));
+    localStorage.setItem('_scores', JSON.stringify(app.scores));
+    localStorage.setItem('_prev_id', this.prev_id);
+    
+    this.scores = [0,0,0,0];
+    this.comments = '';
+    this.prev_id = e.id;
+    },
+    scores: function(){
+    if(this.activeProject.id){
+    this.update_scores();
+    }
+    
+    },
+    comments: function(){
+    if(this.activeProject.id){
+    this.update_scores();
+    }
+    },
+    },
+    mounted: function(){
+    let _activeProject = JSON.parse(localStorage.getItem('_activeProject'));
+    let _scores = JSON.parse(localStorage.getItem('_scores'));
+    let _prev_id = localStorage.getItem('_prev_id');
+    if(_activeProject) this.activeProject = _activeProject;
+    if(_scores) this.scores = _scores;
+    if(_prev_id) this.prev_id = _prev_id;
+    document.getElementById('app').classList.add('fadeIn');
+    document.getElementById('loader').classList.add('fadeOut');
+    }
+    });
     </script>
-
     <!-- include Socket.io scripts -->
     <script src="js/socket.io.js" ></script>
     <script src="js/socket_default.js" ></script>
     <script src="js/socket_judge.js" ></script>
-
     <script>
-
     </script>
-
   </body>
 </html>

@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 var all_projects  = {};
 
-var admins = {
+global.admins = {
     socket_id: null
 }
 var judges = {};
@@ -45,16 +45,16 @@ module.exports = {
     // admins
 
     hasAdmin: function(){
-        return !!admins.socket_id;
+        return !!global.admins.socket_id;
     },
     setAdmin: function(socket_id){
-        admins.socket_id = socket_id
+        global.admins.socket_id = socket_id
     },
     unsetAdmin: function(socket_id){
-        admins.socket_id = null;
+        global.admins.socket_id = null;
     },
     getAdmins: function(socket_id){
-        return admins;
+        return global.admins;
     },
 
     // rest
