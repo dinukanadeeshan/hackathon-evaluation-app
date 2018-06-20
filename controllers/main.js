@@ -140,6 +140,10 @@ module.exports = {
     getActiveProject: function(cb){
         cb(projects[this.activeProjectId]);
     },
+    // getJudgePrevScores: function(_judge_id){
+    //
+    //     return [0,5,6,2];
+    // },
 
     setJudgeScores: function(socket_id, data, cb){
         let judge = _.find(judges_map, function(o) { return _.isEqual(o.socket_id, socket_id) });

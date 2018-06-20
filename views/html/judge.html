@@ -57,19 +57,19 @@
           <div id="scores" class="my-3">
             <h3 class="pb-4">Scores <span class="float-right py-2" style="font-size: 14pt;">Total: {{scores_sum()}} pts</span></h3>
             <div>
-              <h5>Completeness + Marketability <span>30%</span><div class="float-right">{{scores[0]}} pts</div></h5>
+              <h5>Completeness <span>20%</span><div class="float-right">{{scores[0]}} pts</div></h5>
               <input type="range" min="0" max="10" v-model="scores[0]">
             </div>
             <div>
-              <h5>User Experience <span>30%</span> <div class="float-right">{{scores[1]}} pts</div></h5>
+              <h5>Commercialization <span>40%</span> <div class="float-right">{{scores[1]}} pts</div></h5>
               <input type="range" min="0" max="10" v-model="scores[1]">
             </div>
             <div>
-              <h5>Presentation + Demo <span>20%</span><div class="float-right">{{scores[2]}} pts</div></h5>
+              <h5>Relevance <span>10%</span><div class="float-right">{{scores[2]}} pts</div></h5>
               <input type="range" min="0" max="10" v-model="scores[2]">
             </div>
             <div>
-              <h5>Difficulty of Developing <span>20%</span><div class="float-right">{{scores[3]}} pts</div></h5>
+              <h5>Demonstration <span>30%</span><div class="float-right">{{scores[3]}} pts</div></h5>
               <input type="range" min="0" max="10" v-model="scores[3]">
             </div>
             <div></div>
@@ -83,6 +83,7 @@
         <div v-else>
           <div class="animated infinite flash" v-if="!judgeDetails.id">Authorizing your profile...</div>
           <div class="animated infinite flash" v-else-if="!activeProject || !activeProject.id">Waiting for contestant...</div>
+          <div ><a href="#" class="btn btn-accent btn-sm" @click.prevent="clear">Log out</a></div>
         </div>
         
       </transition>
@@ -96,67 +97,78 @@
     <script src="js/axios.min.js" ></script>
     <script src="js/vue.js" ></script>
     <script>
-    var app = new Vue({
-    el: '#app',
-    data: {
-    name: null,
-    activeProject: {},
-    judgeDetails: {},
-    scores: [0,0,0,0],
-    comments: '',
-    prev_id: null,
-    infoInvisible: true,
-    },
-    methods: {
-    scores_sum: function(){
-    let vm = this;
-    // return _.sumBy(vm.scores, function(o) { return +o; });
-    let score_sum =  vm.scores[0]*0.3 + vm.scores[1]*0.3 + vm.scores[2]*0.2 + vm.scores[3]*0.2;
-    return _.round(score_sum, 2);
-    },
-    update_scores: _.debounce(function(){
-    let vm = this;
-    // _.debounce(function () {
-    judge_sendScores(vm.activeProject.id, vm.scores, vm.comments);
-    // }, 300)
-    },300)
-    },
-    watch: {
-    activeProject: function(e){
-    console.log(e);
-    if(e == null) return;
-    if(e.id == this.prev_id) return;
-    localStorage.setItem('_activeProject', JSON.stringify(app.activeProject));
-    localStorage.setItem('_scores', JSON.stringify(app.scores));
-    localStorage.setItem('_prev_id', this.prev_id);
-    
-    this.scores = [0,0,0,0];
-    this.comments = '';
-    this.prev_id = e.id;
-    },
-    scores: function(){
-    if(this.activeProject.id){
-    this.update_scores();
-    }
-    
-    },
-    comments: function(){
-    if(this.activeProject.id){
-    this.update_scores();
-    }
-    },
-    },
-    mounted: function(){
-    let _activeProject = JSON.parse(localStorage.getItem('_activeProject'));
-    let _scores = JSON.parse(localStorage.getItem('_scores'));
-    let _prev_id = localStorage.getItem('_prev_id');
-    if(_activeProject) this.activeProject = _activeProject;
-    if(_scores) this.scores = _scores;
-    if(_prev_id) this.prev_id = _prev_id;
-    document.getElementById('app').classList.add('fadeIn');
-    document.getElementById('loader').classList.add('fadeOut');
-    }
-    });
+        window.onbeforeunload = function ()
+        {
+            return "";
+        };
+    </script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                name: null,
+                activeProject: {},
+                judgeDetails: {},
+                scores: [0, 0, 0, 0],
+                comments: '',
+                prev_id: null,
+                infoInvisible: true,
+            },
+            methods: {
+                scores_sum: function () {
+                    let vm = this;
+                    // return _.sumBy(vm.scores, function(o) { return +o; });
+                    let score_sum = vm.scores[0] * 0.2 + vm.scores[1] * 0.4 + vm.scores[2] * 0.1 + vm.scores[3] * 0.3;
+                    return _.round(score_sum, 2);
+                },
+                clear: function() {
+                    localStorage.clear();
+                    document.location.reload();
+                },
+
+                update_scores: _.debounce(function () {
+                    let vm = this;
+                    // _.debounce(function () {
+                    judge_sendScores(vm.activeProject.id, vm.scores, vm.comments);
+                    // }, 300)
+                }, 300)
+            },
+            watch: {
+                activeProject: function (e) {
+                    console.log(e);
+                    if (e == null) return;
+                    if (e.id == this.prev_id) return;
+                    localStorage.setItem('_activeProject', JSON.stringify(app.activeProject));
+                    localStorage.setItem('_scores', JSON.stringify(app.scores));
+                    localStorage.setItem('_prev_id', this.prev_id);
+
+                    this.scores = [0, 0, 0, 0];
+                    this.comments = '';
+                    this.prev_id = e.id;
+                },
+                scores: function () {
+                    if (this.activeProject.id) {
+                        this.update_scores();
+                    }
+
+                },
+                comments: function () {
+                    if (this.activeProject.id) {
+                        this.update_scores();
+                    }
+                },
+            },
+            mounted: function () {
+                let _activeProject = JSON.parse(localStorage.getItem('_activeProject'));
+                let _scores = JSON.parse(localStorage.getItem('_scores'));
+                let _prev_id = localStorage.getItem('_prev_id');
+                if (_activeProject) this.activeProject = _activeProject;
+                if (_scores) this.scores = _scores;
+                if (_prev_id) this.prev_id = _prev_id;
+                document.getElementById('app').classList.add('fadeIn');
+                document.getElementById('loader').classList.add('fadeOut');
+            }
+        });
     </script>
     <!-- include Socket.io scripts -->
     <script src="js/socket.io.js" ></script>

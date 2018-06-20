@@ -58,9 +58,10 @@ function socket_reloadJudge(_socket_id){
 }
 
 
-function addProject(idea_title, idea_description, student_name){
+function addProject(idea_title, idea_description, student_name, cumulative_marks){
     _projects_count++;
-    socket.emit('new_project', {'id': _projects_count, 'idea_title': idea_title, 'idea_description': idea_description, 'student_name': student_name});
+    socket.emit('new_project', {'id': _projects_count, 'idea_title': idea_title, 'idea_description': idea_description,
+        'student_name': student_name, 'cumulative_marks': cumulative_marks});
 }
 
 function sendProjectEdits(_project_data){
@@ -71,4 +72,8 @@ function sendProjectEdits(_project_data){
 }
 function sendActiveProject(id){
     socket.emit('set_active_project', id);
+}
+
+function clearMarks(projects){
+    socket.emit('edit_project_mapping', projects);
 }

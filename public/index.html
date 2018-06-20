@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,45 +9,56 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/judges.css">
-  </head>
-  <body>
-    <div id="loader" class="animated">
-      <img class="animated infinite pulse" src="img/logo.png" style="width: 300px; margin-top: 5vh;"  alt="">
+</head>
+<body>
+<div id="loader" class="animated">
+    <img class="animated infinite pulse" src="img/logo.png" style="width: 200px; margin-top: 5vh;" alt="">
+</div>
+<div id="app" class="container animated home">
+    <img class="img-fluid" src="img/logo.png" style="max-width: 500px; margin-top: 5vh;" alt="">
+    <h1 class="mt-5">Final Selections</h1>
+    <p>Welcome to final selections for aces hackathon 2018</p>
+    <div>
+        <a href="/judge" class="btn btn-outline-warning">Judge Panel</a>
+        <a href="/admin" class="btn btn-outline-warning">Admin Dashboard</a>
     </div>
-    <div id="app" class="container animated home">
-        <img class="img-fluid" src="img/logo.png" style="max-width: 500px; margin-top: 5vh;"  alt="">
-        <h1 class="mt-5">Final Selections</h1>
-        <p>Welcome to final selections for ACES Hackathon 2017</p>
-        <div>
-            <a href="/judge" class="btn btn-outline-warning">Judge Panel</a>
-            <a href="/admin" class="btn btn-outline-warning">Admin Dashboard</a>
+    <div class="row mt-5">
+
+        <div class="col-12">
+
+            <img class="img-fluid" src="img/sponsors.png" alt="">
         </div>
-        <img class="footer_image img-fluid" src="img/sponsors.png" alt="">
-      
+        <div class="col-12">
+
+            <img class="img-fluid" src="img/sponsors_2.png" alt="">
+        </div>
     </div>
 
-    <!-- jQuery first, then Tether, then Bootstrap JS. -->
-    <script src="js/jquery-3.2.1.min.js"></script>
-    <script src="js/tether.min.js" ></script>
-    <script src="js/bootstrap.min.js" ></script>
 
-    <script src="js/lodash.min.js"></script>
+</div>
 
-    <!-- include Vue and Axios -->
-    <script src="js/axios.min.js" ></script>
-    <script src="js/vue.js" ></script>
+<!-- jQuery first, then Tether, then Bootstrap JS. -->
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/tether.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 
-    <script>
-      var app = new Vue({
+<script src="js/lodash.min.js"></script>
+
+<!-- include Vue and Axios -->
+<script src="js/axios.min.js"></script>
+<script src="js/vue.js"></script>
+
+<script>
+    var app = new Vue({
         el: '#app',
-        mounted: function(){
+        mounted: function () {
 
             document.getElementById('app').classList.add('fadeIn');
             document.getElementById('loader').classList.add('fadeOut');
 
         }
-      });
-    </script>
+    });
+</script>
 
-  </body>
+</body>
 </html>

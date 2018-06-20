@@ -16,9 +16,15 @@ socket.on('connection_status', function(data){
         })
 
         socket.on('judges_mapping_data', function(_judge_mapping_data){
-            console.log('judges_mapping_data', _judge_mapping_data)
+            console.log('judges_mapping_data', _judge_mapping_data);
             app.judgeDetails = _judge_mapping_data;
-        })
+            //socket.emit('get_prev_score_for_project', _judge_mapping_data.id);
+        });
+
+        // socket.on('judges_prev_score', function(_prev_scores){
+        //     console.log('[judges previous scores]', _prev_scores);
+        //     app.scores = _prev_scores;
+        // });
 
         var name = localStorage.getItem('judge_name');
         if(name){

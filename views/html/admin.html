@@ -115,6 +115,7 @@
               <input class="form-control" type="text" v-model="newProject.idea_title" placeholder="[Title]">
               <input class="form-control" type="text" v-model="newProject.idea_description" placeholder="[Description]">
               <input class="form-control" type="text" v-model="newProject.student_name" placeholder="[Idea Owner]">
+              <input class="form-control" type="text" v-model="newProject.cumulative_marks" placeholder="[Cumulative Marks]">
               <input class="btn btn-accent text-accent" type="submit" value="Add New Project">
             </form>
           </div>
@@ -125,6 +126,7 @@
               <th>owner</th>
               <th>title</th>
               <th>description</th>
+              <th>cumulative marks</th>
               <th>actions</th>
             </tr>
             <tr v-for="project in projects" >
@@ -132,6 +134,7 @@
               <td><input class="form-control" :class="{'text-warning': project.id==activeProject.id}" type="text" v-model="project.student_name" placeholder="[Idea Owner]"></td>
               <td><input class="form-control" :class="{'text-warning': project.id==activeProject.id}" type="text" v-model="project.idea_title" placeholder="[Title]"></td>
               <td><input class="form-control" :class="{'text-warning': project.id==activeProject.id}" type="text" v-model="project.idea_description" placeholder="[Description]"></td>
+              <td><input class="form-control" :class="{'text-warning': project.id==activeProject.id}" type="text" v-model="project.cumulative_marks" placeholder="[Cumulative Marks]"></td>
               <td>
                 <a href="#" class="btn btn-accent btn-sm" @click.prevent="removeProjectFromListing(project.id)">Remove</a>
                 <a href="#" class="btn btn-accent btn-sm" @click.prevent="setActiveProject(project.id)">Set Active</a>
@@ -155,6 +158,7 @@
       <div id="scores" class="py-5 col-md-12">
         <h2>Scores</h2>
         <span class="d-flex justify-content-end">
+           <a href="#" class="btn btn-accent text-accent" @click.prevent="clear_marks">Clear Marks</a>
           <span style="line-height: 2rem" class="mr-2">Sorted by marks</span>
           <label class="switch">
             <input class="" type="checkbox" v-model="scores_sorted">
@@ -164,19 +168,20 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th rowspan="2" style="text-align: center; vertical-align: middle;">ID</th>
-                <th rowspan="2" style="text-align: center; vertical-align: middle;">Project</th>
-                <th style="text-align: center; vertical-align: middle;">Scores</th>
-                <th rowspan="2" style="text-align: center; vertical-align: middle;">Grand Total</th>
-                <th rowspan="2" style="text-align: center; vertical-align: middle;">Comments</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle;width: 2%">ID</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle;width: 10%">Project</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle;width: 5%">Cumulative Marks</th>
+                <th style="text-align: center; vertical-align: middle;width: 66%">Scores</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle;width: 5%">Grand Total</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle;width: 22%">Comments</th>
               </tr>
             <tr>
               <th class="d-block" style="position: relative;">
                 <span class="text-center d-inline-block" style="width: 16%">Judge ID</span>
-                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Completeness and Marketability <br><span style="font-size: 10pt; font-weight: lighter;">30%</span></span>
-                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">User Experience <br> <span style="font-size: 10pt; font-weight: lighter;">30%</span></span>
-                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Presentation + Demo <br> <span style="font-size: 10pt; font-weight: lighter;">20%</span></span>
-                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Difficulty of Developing <br> <span style="font-size: 10pt; font-weight: lighter;">20%</span></span>
+                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Completeness <br><span style="font-size: 10pt; font-weight: lighter;">20%</span></span>
+                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Commercialization <br> <span style="font-size: 10pt; font-weight: lighter;">40%</span></span>
+                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Relavance <br> <span style="font-size: 10pt; font-weight: lighter;">10%</span></span>
+                <span class="text-center d-inline-block" style="font-size:xx-small;width: 16%">Demonstration <br> <span style="font-size: 10pt; font-weight: lighter;">30%</span></span>
                 <span class="text-center d-inline-block" style="width: 16%">Total</span>
               </th>
             </tr>
@@ -188,6 +193,7 @@
                 <div>{{project.idea_title}}</div>
                 <div class="small">{{project.student_name}}</div>
               </td>
+              <td>{{project.cumulative_marks}}</td>
               <td>
                 <div v-for="(score, id) in project.scores">
                   <div class="d-block" style="position: relative;">
@@ -244,6 +250,7 @@
           idea_title: '',
           idea_description: '',
           student_name: '',
+            cumulative_marks: 0,
         },
         activeProject: {},
 
@@ -269,7 +276,15 @@
           }
         },
         createNewProject: function(){
-          addProject(this.newProject.idea_title, this.newProject.idea_description, this.newProject.student_name);
+          addProject(this.newProject.idea_title, this.newProject.idea_description, this.newProject.student_name,
+              this.newProject.cumulative_marks);
+          this.newProject =  {
+              time: null,
+              idea_title: '',
+              idea_description: '',
+              student_name: '',
+              cumulative_marks: 0,
+          };
         },
         removeProjectFromListing: function(id){
           if(confirm('delete project?')){
@@ -283,25 +298,34 @@
         setActiveProject: function(id){
           sendActiveProject(id);
         },
+        clear_marks: function(){
+
+          _.each(this.projects, function (_single_project) {
+              console.log(' --------------- ',_single_project);
+              _single_project.scores = [];
+          });
+          clearMarks(this.projects);
+        },
 
         score_sum: function(scores){
-          // return _.sumBy(scores, function(o){ return +o; });
-          let score = scores[0]*0.3 + scores[1]*0.3 + scores[2]*0.2 + scores[3]*0.2;
-          return _.round(score, 2)
+          // // return _.sumBy(scores, function(o){ return +o; });
+           let score = scores[0]*0.2 + scores[1]*0.4 + scores[2]*0.1 + scores[3]*0.3;
+           return _.round(score, 2)
         },
         score_grand_total: function(project){
-
-          let scores_all = (_.toArray(project.scores));  // array of lengths of judges
-
-          let number_of_judges = _.size(app.judges)
-
-          let _grand_total = 0;
-          for (var i = 0; i < scores_all.length; i++) {
-            let scores_per_project = scores_all[i].scores;
-            _grand_total += app.score_sum(scores_per_project);
-          }
-
-          return _.round(_grand_total/number_of_judges, 2);
+          //
+           let scores_all = (_.toArray(project.scores));  // array of lengths of judges
+          //
+           let number_of_judges = _.size(app.judges);
+          //
+           let _grand_total = 0;
+           for (var i = 0; i < scores_all.length; i++) {
+             let scores_per_project = scores_all[i].scores;
+             _grand_total += app.score_sum(scores_per_project);
+           }
+          //
+           return _.round(_grand_total/number_of_judges, 2);
+          //   // return ( ((_.round(_grand_total/number_of_judges, 2) * 40) / 70)  + ((parseFloat(project.cumulative_marks) * 60) / 10) );
         },
         ifSocketNotound: function(_socket_id){
           if(this.judges[_socket_id]){

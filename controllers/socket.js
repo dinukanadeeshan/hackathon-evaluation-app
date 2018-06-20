@@ -114,7 +114,7 @@ module.exports = function(http){
             //      ██╗██╗   ██╗██████╗  ██████╗ ███████╗
             //      ██║██║   ██║██╔══██╗██╔════╝ ██╔════╝
             //      ██║██║   ██║██║  ██║██║  ███╗█████╗  
-            // ██   ██║██║   ██║██║  ██║██║   ██║██╔══╝  
+            // ██   ██║██║   ██║██║  ██║██║   ██║██╔══╝
             // ╚█████╔╝╚██████╔╝██████╔╝╚██████╔╝███████╗
             //  ╚════╝  ╚═════╝ ╚═════╝  ╚═════╝ ╚══════╝
                                           
@@ -124,8 +124,16 @@ module.exports = function(http){
                     io.emit('state_updated');
                     socket.emit('connection_status', 'success');
                 });
-                
-                
+
+                socket.on('get_prev_score_for_project', function(_judge_id){
+                    console.log('[get_prev_score_for_project] ----------------------------------------', _judge_id);
+                    controller.getJudgePrevScores(_judge_id, function (_prev_scores){
+                        socket.emit('judges_prev_score', _prev_scores);
+                    });
+
+
+
+                });
                 socket.on('get_judge_data', function(){
                     controller.getActiveProject(function(active_project_data){
                         io.emit('update_active_project', active_project_data);
@@ -161,10 +169,18 @@ module.exports = function(http){
                     controller.getJudges(function(data){
                         socket.emit('judge_data', data);
                     })
+                    let _judge_id;
                     controller.getJudgesMapping_single(socket.id, function(_data){
-                        console.log(_data);
+                        console.log(' ------------------------------------------- ',_data);
+                        _judge_id = _data.id;
                         socket.emit('judges_mapping_data', _data);
-                    })
+
+                    });
+                    // controller.getJudgePrevScores(_judge_id);
+                    // socket.emit('judges_prev_score', controller.getJudgePrevScores(_judge_id));
+                    // controller.getJudgePrevScores(1, function (_prev_scores){
+                    //     socket.emit('judges_prev_score', _prev_scores);
+                    // });
                 })
 
                 socket.on('disconnect', function(){
